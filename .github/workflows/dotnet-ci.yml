@@ -1,0 +1,29 @@
+name: .NET MVC CI
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore src/SliceCloud.Web/SliceCloud.Web.csproj
+
+    - name: Build (Compile check)
+      run: dotnet build src/SliceCloud.Web/SliceCloud.Web.csproj --no-restore --configuration Release
