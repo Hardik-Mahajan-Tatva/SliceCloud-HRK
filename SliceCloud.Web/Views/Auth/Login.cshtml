@@ -1,5 +1,21 @@
 @{
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
-    ViewData[index: "Title"] = "Login Page";
+    ViewData[index: "Title"] = "Login";
 }
-<div>Login</div>
+@model SliceCloud.Repository.ViewModels.LoginViewModel
+
+<div class="d-flex align-items-center justify-content-center">
+    <form method="post" asp-action="Login" asp-controller="Auth">
+        <div class=" mb-3">
+            <input type="email" class="form-control" placeholder=" john@exmaple.com" asp-for="Email">
+        </div>
+        <span asp-validation-for="Email" class="text-danger"></span>
+        <div class="">
+            <input type="password" class="form-control" placeholder="John@123" asp-for="Password">
+        </div>
+        <span asp-validation-for="Password" class="text-danger"></span>
+        <input type="checkbox" class="form-check-input" asp-for="RememberMe">
+        <label class="form-check-label" for="RememberMe" style="cursor: pointer;">Remember me</label>
+        <button class="btn btn-primary w-100" type="submit">Login</button>
+    </form>
+</div>
