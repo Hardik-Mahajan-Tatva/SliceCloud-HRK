@@ -28,128 +28,80 @@
 <body>
     <div class="container-fluid p-0 m-0">
         <div class="d-flex flex-row">
-            <!-- ============================================= aside section starts ============================================= -->
-            <div class="d-none d-xxl-flex flex-column">
-                <ul class="list-unstyled d-flex flex-column gap-2">
-                    <li class="mb-3 mt-2">
-                        <div class="d-flex align-items-center justify-content-center gap-2">
-                            <img src="~/images/logdo.png" alt="This is logo img" width="20%" height="20%">
-                            <div>
-                                <h5 class="font-weight-bold custom-body-text-color">SliceCloud</h5>
-                            </div>
-                        </div>
-                    </li>
+
+            @await Html.PartialAsync(partialViewName: "_Sidebar")
+
+            <div class="custom-body-page-color">
+                <!-- ============================================= h-nav section starts ============================================= -->
+                <div class="btn-group  d-flex justify-content-end align-items-center">
                     @{
-                        string? currentController = ViewContext.RouteData.Values[key: "Controller"]?.ToString();
+                        string profileImagePath = "images/default_pfp.svg";
                     }
-                    <li
-                        class="ps-4 w-100 p-2 @(currentController == "Dashboard" ? "custom-active-ul-item-bg-color" : "")">
-                        <a asp-controller="Dashboard" asp-action="Dashboard" class="pe-auto text-decoration-none">
-                            <div class="d-flex justify-content-start align-items-center gap-2">
-                                <img src="~/images/navbar-icons-rms/@(currentController == "Dashboard" ? "dashboard_active.svg" : "dashboard_default.svg")"
-                                    alt="Dashboard Image">
-                                <div
-                                    class="@(currentController == "Dashboard" ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
-                                    Dashboard
+                    <img src="/@profileImagePath" alt="Profile Image" class="dropdown-toggle rounded-circle"
+                        data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" width="40px"
+                        height="40px" style="cursor: pointer;">
+                    <ul class="dropdown-menu dropdown-menu-lg-end">
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center justify-content-start"
+                                asp-controller="MyProfile" asp-action="MyProfile" style="cursor: pointer;">
+
+                                <img src="/@profileImagePath" class="rounded-circle" width="12%"
+                                    style="object-fit: cover;" />
+                                <span class="ms-3"> @User!.FindFirst(type: "username")?.Value</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li class="p-0 m-0">
+                            <a class="dropdown-item text-black" asp-controller="MyProfile" asp-action="MyProfile">
+                                <div class="d-flex gap-3">
+                                    <div>
+                                        <img src="~/images/profile.svg" alt="">
+                                    </div>
+                                    <div>
+                                        My Profile
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="ps-4 w-100 p-2 @(currentController == "Users" ? "custom-active-ul-item-bg-color" : "")">
-                        <a asp-controller="Users" asp-action="Users" class="pe-auto text-decoration-none">
-                            <div class="d-flex justify-content-start align-items-center gap-2">
-                                <img src="~/images/navbar-icons-rms/@(currentController == "Users" ? "user_active.svg" : "user_default.svg")"
-                                    alt="Users Image">
-                                <div
-                                    class="@(currentController == "Users" ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
-                                    Users</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li
-                        class="ps-4 w-100 p-2 @(currentController == "RoleAndPermission" ? "custom-active-ul-item-bg-color" : "")">
-                        <a asp-controller="RoleAndPermission" asp-action="RoleAndPermission"
-                            class="pe-auto text-decoration-none">
-                            <div class="d-flex justify-content-start align-items-center gap-2">
-                                <img src="~/images/navbar-icons-rms/@(currentController == "RoleAndPermission" ? "roles_active.svg" : "roles_default.svg")"
-                                    alt="Roles Image">
-                                <div
-                                    class="@(currentController == "RoleAndPermission" ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
-                                    Role And Permission</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="ps-4 w-100 p-2 @(currentController == "Menu" ? "custom-active-ul-item-bg-color" : "")">
-                        <a asp-controller="Menu" asp-action="Menu" class="pe-auto text-decoration-none">
-                            <div class="d-flex justify-content-start align-items-center gap-2">
-                                <img src="~/images/navbar-icons-rms/@(currentController == "Menu" ? "menu_active.svg" : "menu_default.svg")"
-                                    alt="Menu Image">
-                                <div
-                                    class="@(currentController == "Menu" ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
-                                    Menu</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li
-                        class="ps-4 w-100 p-2 @(currentController == "TableAndSection" ? "custom-active-ul-item-bg-color" : "")">
-                        <a asp-controller="TableAndSection" asp-action="TableAndSection"
-                            class="pe-auto text-decoration-none">
-                            <div class="d-flex justify-content-start align-items-center gap-2">
-                                <img src="~/images/navbar-icons-rms/@(currentController == "TableAndSection" ? "table_active.svg" : "table_default.svg")"
-                                    alt="Table Image">
-                                <div
-                                    class="@(currentController == "TableAndSection" ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
-                                    Table And Section</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li
-                        class="ps-4 w-100 p-2 @(currentController == "TaxesAndFees" ? "custom-active-ul-item-bg-color" : "")">
-                        <a asp-controller="TaxesAndFees" asp-action="TaxesAndFees" class="pe-auto text-decoration-none">
-                            <div class="d-flex justify-content-start align-items-center gap-2">
-                                <img src="~/images/navbar-icons-rms/@(currentController == "TaxesAndFees" ? "tax_active.svg" : "tax_default.svg")"
-                                    alt="Taxes Image">
-                                <div
-                                    class="@(currentController == "TaxesAndFees" ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
-                                    Taxes And Fees</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="ps-4 w-100 p-2 @(currentController == "Orders" ? "custom-active-ul-item-bg-color" : "")">
-                        <a asp-controller="Orders" asp-action="Orders" class="pe-auto text-decoration-none">
-                            <div class="d-flex justify-content-start align-items-center gap-2">
-                                <img src="~/images/navbar-icons-rms/@(currentController == "Orders" ? "orders_active.svg" : "orders_default.svg")"
-                                    alt="Orders Image">
-                                <div
-                                    class="@(currentController == "Orders" ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
-                                    Orders</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li
-                        class="ps-4 w-100 p-2 @(currentController == "Customers" ? "custom-active-ul-item-bg-color" : "")">
-                        <a asp-controller="Customers" asp-action="Customers" class="pe-auto text-decoration-none">
-                            <div class="d-flex justify-content-start align-items-center gap-2">
-                                <img src="~/images/navbar-icons-rms/@(currentController == "Customers" ? "customer_active.svg" : "customer_default.svg")"
-                                    alt="Customers Image">
-                                <div
-                                    class="@(currentController == "Customers" ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
-                                    Customers
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="MyProfile" asp-action="MyProfileChangePassword"
+                                style="cursor: pointer;">
+                                <div class="d-flex gap-3">
+                                    <div>
+                                        <img src="~/images/change_password.svg" alt="">
+                                    </div>
+                                    <div>
+                                        Change Password
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <!-- ============================================= body section starts ============================================= -->
-            <div>
-                @RenderBody()
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal"
+                                data-bs-target="#logoutModal">
+                                <div class="d-flex gap-3">
+                                    <div>
+                                        <img src="~/images/logout.svg" alt="">
+                                    </div>
+                                    <div class="d-flex justify-content-start">
+                                        Logout
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- ============================================= h-nav section ends ============================================= -->
+                <main role="main">
+                    @RenderBody()
+                </main>
             </div>
         </div>
-    </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

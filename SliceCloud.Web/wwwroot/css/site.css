@@ -17,6 +17,26 @@ body {
   color: #0066a7;
 }
 
+.custom-active-ul-item-bg-color {
+  background: #e9eaeb;
+}
+
+.custom-active-ul-item-text-color {
+  color: #0e67a7 !important;
+}
+
+.custom-navbar-bg-color {
+  background-color: #0066a7 !important;
+}
+
+.custom-body-page-color {
+  background-color: #f2f2f2;
+}
+
+.custom-navbar-bg-color {
+  background-color: #0066a7 !important;
+}
+
 .custom-link-color {
   color: #0066a7 !important;
 }
