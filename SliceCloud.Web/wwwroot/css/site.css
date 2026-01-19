@@ -1,3 +1,19 @@
+:root {
+  /* Backgrounds  */
+  --bg-main: #f2f2f2;
+  --bg-body: #d8eff7;
+  --bg-navbar: #0066a7;
+  --bg-active-item: #e9eaeb;
+
+  /* Text Colors */
+  --text-primary: #0066a7;
+  --text-active: #0e67a7;
+  --text-default: #1f2937;
+
+  /* Links & Accents */
+  --link-color: #0066a7;
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -6,39 +22,39 @@
 
 html,
 body {
-  background-color: #f2f2f2;
+  background-color: var(--bg-main);
 }
 
 .custom-body-bg-color {
-  background: #d8eff7;
+  background: var(--bg-body);
 }
 
 .custom-body-text-color {
-  color: #0066a7;
+  color: var(--text-primary) !important;
 }
 
 .custom-active-ul-item-bg-color {
-  background: #e9eaeb;
+  background: var(--bg-active-item);
 }
 
 .custom-active-ul-item-text-color {
-  color: #0e67a7 !important;
+  color: var(--link-color) !important;
 }
 
 .custom-navbar-bg-color {
-  background-color: #0066a7 !important;
+  background-color: var(--bg-navbar) !important;
 }
 
 .custom-body-page-color {
-  background-color: #f2f2f2;
+  background-color: var(--bg-main);
 }
 
 .custom-navbar-bg-color {
-  background-color: #0066a7 !important;
+  background-color: var(--bg-navbar) !important;
 }
 
 .custom-link-color {
-  color: #0066a7 !important;
+  color: var(--link-color) !important;
 }
 
 .custom-cursor-pointer {
