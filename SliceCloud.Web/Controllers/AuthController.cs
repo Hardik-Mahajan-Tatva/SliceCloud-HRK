@@ -44,7 +44,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+            TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
             return View();
         }
     }
@@ -116,7 +116,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
         }
         catch
         {
-            TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+            TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
             return View("Error");
         }
     }
@@ -134,7 +134,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+            TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
             return View("Error");
         }
     }
@@ -170,12 +170,12 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
 
             await _emailSenderService.SendResetPasswordEmailAsync(model.Email, resetLink);
 
-            TempData["SuccessMessage"] = "A password reset link has been sent to your email.";
+            TempData.SetToast("success", "A password reset link has been sent to your email.");
             return RedirectToAction("Login", "Auth");
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "Failed to send reset email.";
+            TempData.SetToast("error", "Failed to send reset email.");
             return View(model);
         }
     }
@@ -191,25 +191,25 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
         {
             if (string.IsNullOrEmpty(token))
             {
-                TempData["ErrorMessage"] = "An error occurred. Please try again.";
+                TempData.SetToast("error", "An error occurred. Please try again.");
                 return RedirectToAction("Login");
             }
 
             bool isValid = await _authService.ValidatePasswordResetTokenAsync(token);
             if (!isValid)
             {
-                TempData["ErrorMessage"] = "Invalid or expired reset link.";
+                TempData.SetToast("error", "Invalid or expired reset link.");
                 return RedirectToAction("Login");
             }
 
             ResetPasswordViewModel? resetPasswordViewModel = new ResetPasswordViewModel { Token = token };
-            TempData["InfoMessage"] = "Please reset you password";
+            TempData.SetToast("info", "Please reset your password");
 
             return View(resetPasswordViewModel);
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+            TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
             return RedirectToAction("Login");
         }
     }
@@ -242,12 +242,12 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
                 return View(model);
             }
 
-            TempData["SuccessMessage"] = "Your password has been successfully reset. Please log in with your new password.";
+             TempData.SetToast("success", "Your password has been successfully reset. Please log in with your new password.");
             return RedirectToAction("Login", "Auth");
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "An error occurred. Please try again.";
+            TempData.SetToast("error", "An error occurred. Please try again.");
             return View(model);
         }
     }
@@ -266,7 +266,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+            TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
             return RedirectToAction("Login", "Auth");
         }
     }
@@ -302,7 +302,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "An error occurred while refreshing your session. Please try again.";
+            TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
             return RedirectToAction("Login", "Auth");
         }
     }
