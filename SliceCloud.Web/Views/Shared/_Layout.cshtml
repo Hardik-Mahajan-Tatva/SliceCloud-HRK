@@ -102,6 +102,18 @@
 
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script src="~/js/site.js"></script>
+
+
+        @if (TempData.Peek(key: "Toast") != null)
+        {
+            <script>
+                const toast = JSON.parse('@Html.Raw(TempData.Peek(key: "Toast"))');
+                const type = (toast.type || 'info').toLowerCase();
+                toastr[type](toast.message);
+            </script>
+        }
 
 </body>
 
