@@ -88,7 +88,7 @@ public class UsersController(IUsersService usersService, ICountryService country
         try
         {
 
-            var cities = await _cityService.GetCitiesByStateIdAsync(StateId);
+            List<City>? cities = await _cityService.GetCitiesByStateIdAsync(StateId);
             return Json(cities);
         }
         catch (Exception ex)
@@ -106,7 +106,7 @@ public class UsersController(IUsersService usersService, ICountryService country
     {
         try
         {
-            var uniqueErrors = await _usersService.ValidateUniqueFieldsAsync(createUserViewModel);
+            Dictionary<string, string>? uniqueErrors = await _usersService.ValidateUniqueFieldsAsync(createUserViewModel);
             foreach (var error in uniqueErrors)
             {
                 ModelState.AddModelError(error.Key, error.Value);
@@ -189,7 +189,7 @@ public class UsersController(IUsersService usersService, ICountryService country
                 CountryId = user.CountryId,
                 StateId = user.StateId,
                 CityId = user.CityId,
-                Address = user.Address ?? string.Empty,
+                Address = user.Address,
                 ZipCode = user.ZipCode,
                 PhoneNumber = user.PhoneNumber,
                 Status = user.Status,
@@ -204,7 +204,106 @@ public class UsersController(IUsersService usersService, ICountryService country
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+            TempData.SetToast("warn", "An error occurred while processing your request. Please try again.");
+            return View();
+        }
+    }
+
+    #endregion
+
+    #region UpdateUser
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateUser(UpdateUserViewModel updateUserViewModel, int id, IFormFile? itemImage)
+    {
+        try
+        {
+            var uniqueErrors = await _usersService.ValidateUniqueFieldsAsync(updateUserViewModel);
+            foreach (var error in uniqueErrors)
+            {
+                ModelState.AddModelError(error.Key, error.Value);
+            }
+            if (!ModelState.IsValid)
+            {
+                foreach (var key in ModelState.Keys)
+                {
+                    var errors = ModelState[key]?.Errors;
+                    if (errors != null)
+                        foreach (var error in errors)
+                        {
+                            Console.WriteLine($"Field: {key}, Error: {error.ErrorMessage}");
+                        }
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+
+                UpdateUserViewModel model = updateUserViewModel;
+                UpdateUserViewModel? profile = await _usersService.GetUserByIdAsync(id);
+                if (profile == null)
+                    throw new Exception("Profile Not found");
+                string? email = profile.Email;
+                model.Countries = await _countryService.GetAllCountriesAsync();
+                model.States = await _stateService.GetStatesByCountryIdAsync(model.CountryId);
+                model.Cities = await _cityService.GetCitiesByStateIdAsync(model.StateId);
+                model.Roles = await _rolesService.GetAllRolesAsync();
+                model.Email = profile.Email;
+                if (itemImage == null && !string.IsNullOrEmpty(updateUserViewModel.ProfileImage))
+                {
+                    updateUserViewModel.ProfileImage = profile.ProfileImage;
+                }
+                TempData.SetToast("warn", "Please submit the valid form.");
+                return View(updateUserViewModel);
+            }
+            var updatedModal = updateUserViewModel;
+            updatedModal.Email = updateUserViewModel.Email;
+            Role? role = await _rolesService.GetRoleByIdAsync(updatedModal.RoleId);
+            if (role is not null)
+                updatedModal.Role = role.RoleName;
+
+            bool result = await _usersService.UpdateExitingUserAsync(updatedModal, id, itemImage!);
+            if (result)
+            {
+                TempData.SetToast("success", "User Edited Successfully");
+                return RedirectToAction("Users", "Users");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        catch (Exception)
+        {
+            TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
+            return View();
+        }
+    }
+
+    #endregion
+
+    #region DeleteUser
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        try
+        {
+            bool isUserDeleted = await _usersService.DeleteExistingUserAsync(id);
+            if (isUserDeleted)
+            {
+                TempData.SetToast("success", "User Deleted Successfully");
+                return RedirectToAction("Users", "Users");
+            }
+            else
+            {
+                TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
+                return RedirectToAction("Users", "Users");
+            }
+        }
+        catch (Exception)
+        {
+            TempData.SetToast("error", "An error occurred while processing your request. Please try again.");
             return View();
         }
     }

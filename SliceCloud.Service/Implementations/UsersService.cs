@@ -46,6 +46,28 @@ public class UsersService(IUsersRepository usersRepository, IRolesRepository rol
 
     #endregion
 
+    #region ValidateUniqueFields
+
+    public async Task<Dictionary<string, string>> ValidateUniqueFieldsAsync(UpdateUserViewModel updateUserViewModel)
+    {
+        Dictionary<string, string> errors = [];
+
+        if (updateUserViewModel.Email != null)
+            if (await _usersRepository.IsEmailExistsAsync(updateUserViewModel.Email, updateUserViewModel.Id))
+                errors.Add(nameof(updateUserViewModel.Email), "Email already exists.");
+
+        if (await _usersRepository.IsUsernameExistsAsync(updateUserViewModel.UserName, updateUserViewModel.Id))
+            errors.Add(nameof(updateUserViewModel.UserName), "UserName already exists.");
+
+        if (updateUserViewModel.PhoneNumber != null)
+            if (await _usersRepository.IsPhoneExistsAsync(updateUserViewModel.PhoneNumber, updateUserViewModel.Id))
+                errors.Add(nameof(updateUserViewModel.PhoneNumber), "Phone number already exists.");
+
+        return errors;
+    }
+
+    #endregion
+
     #region CreateUser
 
     public async Task<bool> CreateUserAsync(CreateUserViewModel createUserViewModel, IFormFile itemImage)
@@ -57,7 +79,7 @@ public class UsersService(IUsersRepository usersRepository, IRolesRepository rol
             createUserViewModel.Role = role!.RoleName.ToString();
         }
 
-        // var itemImgPath = await _imageService.ImgPath(itemImage);
+        // string itemImgPath = await _imageService.ImgPath(itemImage);
 
         User user = new()
         {
@@ -131,6 +153,58 @@ public class UsersService(IUsersRepository usersRepository, IRolesRepository rol
         {
             return null;
         }
+    }
+
+    #endregion UpdateExitingUser
+
+    #region 
+
+    public async Task<bool> UpdateExitingUserAsync(UpdateUserViewModel updateUserViewModel, int id, IFormFile itemImage)
+    {
+        var user = await _usersRepository.GetUserByIdAsync(id);
+
+        // if (itemImage != null)
+        // {
+        //     user!.ProfileImage = await _imageService.ImgPath(itemImage);
+        // }
+        // else
+        // {
+        //     user!.Profileimg = updateUserViewModel.ProfileImage;
+        // }
+
+
+        if (user != null)
+        {
+            user.FirstName = updateUserViewModel.FirstName;
+            user.LastName = updateUserViewModel.LastName;
+            user.UserName = updateUserViewModel.UserName;
+            user.RoleId = updateUserViewModel.RoleId;
+            user.Email = user.Email;
+            user.Status = (int?)updateUserViewModel.Status;
+            user.CountryId = updateUserViewModel.CountryId;
+            user.StateId = updateUserViewModel.StateId;
+            user.CityId = updateUserViewModel.CityId;
+            user.Address = updateUserViewModel.Address;
+            user.ZipCode = updateUserViewModel.ZipCode;
+            user.PhoneNumber = updateUserViewModel.PhoneNumber;
+
+            await _usersRepository.UpdateUserAsync(user);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    #endregion
+
+    #region DeleteExistingUser
+
+    public async Task<bool> DeleteExistingUserAsync(int id)
+    {
+        return await _usersRepository.DeleteExistingUserAsync(id);
     }
 
     #endregion

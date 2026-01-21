@@ -48,4 +48,18 @@ public interface IUsersRepository
     /// <param name="userId">The ID of the user to retrieve.</param>
     /// <returns>A task that returns the user if found, otherwise null.</returns>
     Task<User?> GetUserByIdAsync(int userId);
+
+    /// <summary>
+    /// Updates a user's information asynchronously.
+    /// </summary>
+    /// <param name="user">The user to update.</param>
+    /// <returns>A task that returns true if the update was successful, otherwise false.</returns>
+    Task<bool> UpdateUserAsync(User user);
+
+    /// <summary>
+    /// Deletes a user by their ID asynchronously.
+    /// </summary>
+    /// <param name="userId">The ID of the user to delete.</param>
+    /// <returns>A task that returns true if the deletion was successful, otherwise false.</returns>
+    Task<bool> DeleteExistingUserAsync(int userId);
 }

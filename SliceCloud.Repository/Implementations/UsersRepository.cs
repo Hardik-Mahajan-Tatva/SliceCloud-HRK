@@ -109,12 +109,58 @@ public class UsersRepository(SliceCloudContext sliceCloudContext) : IUsersReposi
     }
 
     #endregion
-    
+
     #region GetUserById
 
     public async Task<User?> GetUserByIdAsync(int userId)
     {
         return await _sliceCloudContext.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+    }
+
+    #endregion
+
+    #region  
+
+    public async Task<bool> UpdateUserAsync(User user)
+    {
+        if (user == null)
+        {
+            return false;
+        }
+
+        _sliceCloudContext.Users.Update(user);
+
+        UsersLogin? userLogin = await _sliceCloudContext.UsersLogins.FirstOrDefaultAsync(
+            u => u.Email == user.Email
+        );
+
+        if (userLogin is not null)
+        {
+            userLogin.RoleId = user.RoleId;
+            _sliceCloudContext.UsersLogins.Update(userLogin);
+        }
+        int rowAffected = await _sliceCloudContext.SaveChangesAsync();
+        return rowAffected > 0;
+    }
+
+    #endregion
+
+    #region DeleteExistingUser
+
+    public async Task<bool> DeleteExistingUserAsync(int userId)
+    {
+        User? user = await _sliceCloudContext.Users.FindAsync(userId);
+        if (user == null)
+            return false;
+
+        User? newUser = user;
+        if (user.IsDeleted == false)
+        {
+            user.IsDeleted = true;
+        }
+        _sliceCloudContext.Users.Update(user);
+
+        return await _sliceCloudContext.SaveChangesAsync() > 0;
     }
 
     #endregion

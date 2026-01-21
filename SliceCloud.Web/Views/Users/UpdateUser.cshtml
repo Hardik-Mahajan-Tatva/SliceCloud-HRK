@@ -4,7 +4,7 @@
 
 <div class="d-flex flex-column w-100 p-4">
     <div class="d-flex justify-content-between w-100 mb-3">
-        <h1 class="custom-body-text-color">Add New User</h1>
+        <h1 class="custom-body-text-color">Update User</h1>
         <div>
             <a asp-controller="Users" asp-action="Users" class="btn btn-outline-primary">
                 Back
@@ -12,10 +12,11 @@
         </div>
     </div>
     <div class="p-3 shadow-sm bg-white rounded form-wrapper shadow">
-        <form method="post" asp-controller="Users" asp-action="AddNewUser" class="p-1" enctype="multipart/form-data">
+        <form method="post" asp-controller="Users" asp-action="UpdateUser" class="p-1" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-12 col-md-6">
                     <div class="form-floating mb-3">
+                        <input type="text" class="form-control" asp-for="Id" hidden>
                         <input type="text" class="form-control" asp-for="FirstName" placeholder="First Name Please">
                         <label for="FirstName">First Name*</label>
                         <span asp-validation-for="FirstName" class="text-danger"></span>
@@ -63,13 +64,17 @@
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-12 col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="password" class="form-control" asp-for="Password" placeholder="name@example.com">
-                        <label for="Password">Password*</label>
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                 <div class="col-12 col-md-6">
+                        <div class="form-floating mb-3">
+                            <select class="form-select" aria-label="Floating label select example"
+                                asp-for="Status">
+                                <option value="Active">Active</option>
+                                <option value="InActive">InActive</option>
+                            </select>
+                            <label for="Status">Status*</label>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
                     </div>
-                </div>
             </div>
             <div class="row">
             @{
@@ -184,7 +189,7 @@
                 </div>
             </div>
             <div class="d-flex flex-row align-items-center justify-content-start gap-1 mt-1">
-                <button type="submit" class="btn btn-primary text-white">Create User</button>
+                <button type="submit" class="btn btn-primary text-white">Update User</button>
                 <a asp-controller="Users" asp-action="Users" class="btn btn-outline-primary">Cancel</a>
             </div>
         </form>

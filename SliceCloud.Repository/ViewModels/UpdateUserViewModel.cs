@@ -34,15 +34,15 @@ public class UpdateUserViewModel
 
     [Required(ErrorMessage = "Address is required.")]
     [StringLength(200, ErrorMessage = "Address cannot exceed 200 characters.")]
-    public required string Address { get; set; }
+    public string Address { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Phone Number number is required.")]
     [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "Invalid Phone Number number format.")]
-    public required string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Status is required.")]
     [RegularExpression(@"^(Active|InActive)$", ErrorMessage = "Please select any one status.")]
-    public required UserStatus Status { get; set; }
+    public UserStatus Status { get; set; } = UserStatus.Active;
 
     [Required(ErrorMessage = "Please select a valid country.")]
     [Range(1, int.MaxValue, ErrorMessage = "Please select a valid country.")]

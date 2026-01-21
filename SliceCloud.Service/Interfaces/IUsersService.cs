@@ -20,6 +20,13 @@ public interface IUsersService
     Task<Dictionary<string, string>> ValidateUniqueFieldsAsync(CreateUserViewModel createUserViewModel);
 
     /// <summary>
+    /// Validates the uniqueness of fields for a new user asynchronously.
+    /// </summary>
+    /// <param name="model">The view model containing user details.</param>
+    /// <returns>A task that returns a dictionary of validation errors, if any.</returns>
+    Task<Dictionary<string, string>> ValidateUniqueFieldsAsync(UpdateUserViewModel updateUserViewModel);
+
+    /// <summary>
     /// Creates a new user asynchronously.
     /// </summary>
     /// <param name="createUserViewModel">The view model containing user details.</param>
@@ -33,4 +40,19 @@ public interface IUsersService
     /// <param name="userId">The ID of the user to retrieve.</param>
     /// <returns>A task that returns the user view model if found, otherwise null.</returns>
     Task<UpdateUserViewModel?> GetUserByIdAsync(int userId);
+
+    /// <summary>
+    /// Updates an existing user asynchronously.
+    /// </summary>
+    /// <param name="updateUserViewModel">The view model containing updated user details.</param>
+    /// <param name="id">The ID of the user to update.</param>
+    /// <returns>A task that returns true if the update was successful, otherwise false.</returns>
+    Task<bool> UpdateExitingUserAsync(UpdateUserViewModel updateUserViewModel, int id, IFormFile itemImage);
+
+    /// <summary>
+    /// Deletes an existing user by their ID asynchronously.
+    /// </summary>
+    /// <param name="id">The ID of the user to delete.</param>
+    /// <returns>A task that returns true if the deletion was successful, otherwise false.</returns>
+    Task<bool> DeleteExistingUserAsync(int id);
 }
