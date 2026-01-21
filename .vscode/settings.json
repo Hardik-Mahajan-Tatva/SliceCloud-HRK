@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "enctype",
         "evenodd",
         "Hmac",
         "jquery",
@@ -7,6 +8,8 @@
         "nowrap",
         "Npgsql",
         "offcanvas",
+        "onchange",
+        "onclick",
         "Poper",
         "stylesheet",
         "tabindex",

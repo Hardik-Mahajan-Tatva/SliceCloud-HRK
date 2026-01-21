@@ -1,13 +1,19 @@
+using Microsoft.AspNetCore.Http;
 using SliceCloud.Repository.Interfaces;
 using SliceCloud.Repository.Models;
 using SliceCloud.Repository.ViewModels;
 using SliceCloud.Service.Interfaces;
+using SliceCloud.Service.Utils;
 
 namespace SliceCloud.Service.Implementations;
 
-public class UsersService(IUsersRepository usersRepository) : IUsersService
+public class UsersService(IUsersRepository usersRepository, IRolesRepository rolesRepository, IUsersLoginService usersLoginService) : IUsersService
 {
     private readonly IUsersRepository _usersRepository = usersRepository;
+    private readonly IRolesRepository _rolesRepository = rolesRepository;
+    private readonly IUsersLoginService _usersLoginService = usersLoginService;
+
+    #region GetAllUsers
 
     public async Task<PaginatedList<User>> GetAllUsersAsync(int pageNumber, int pageSize, string query, string sortOrder, string sortColumn, string search)
     {
@@ -16,4 +22,116 @@ public class UsersService(IUsersRepository usersRepository) : IUsersService
         return paginatedUsers;
     }
 
+    #endregion
+
+    #region ValidateUniqueFields
+
+    public async Task<Dictionary<string, string>> ValidateUniqueFieldsAsync(CreateUserViewModel createUserViewModel)
+    {
+        Dictionary<string, string> errors = [];
+
+        if (createUserViewModel.Email != null)
+            if (await _usersRepository.IsEmailExistsAsync(createUserViewModel.Email, null))
+                errors.Add(nameof(createUserViewModel.Email), "Email already exists.");
+
+        if (await _usersRepository.IsUsernameExistsAsync(createUserViewModel.UserName, null))
+            errors.Add(nameof(createUserViewModel.UserName), "UserName already exists.");
+
+        if (createUserViewModel.Phone != null)
+            if (await _usersRepository.IsPhoneExistsAsync(createUserViewModel.Phone, null))
+                errors.Add(nameof(createUserViewModel.Phone), "Phone number already exists.");
+
+        return errors;
+    }
+
+    #endregion
+
+    #region CreateUser
+
+    public async Task<bool> CreateUserAsync(CreateUserViewModel createUserViewModel, IFormFile itemImage)
+    {
+        Role? role = await _rolesRepository.GetRoleByIdAsync(createUserViewModel.RoleId);
+
+        if (createUserViewModel.Role == null && role!.RoleName != null)
+        {
+            createUserViewModel.Role = role!.RoleName.ToString();
+        }
+
+        // var itemImgPath = await _imageService.ImgPath(itemImage);
+
+        User user = new()
+        {
+            FirstName = createUserViewModel.FirstName,
+            LastName = createUserViewModel.LastName,
+            UserName = createUserViewModel.UserName,
+            RoleId = createUserViewModel.RoleId,
+            Status = 1,
+            Email = createUserViewModel.Email,
+            PasswordHash = PasswordUtils.HashPassword(createUserViewModel.Password!),
+            ZipCode = createUserViewModel.ZipCode,
+            Address = createUserViewModel.Address,
+            PhoneNumber = createUserViewModel.Phone,
+            CountryId = createUserViewModel.CountryId,
+            StateId = createUserViewModel.StateId,
+            CityId = createUserViewModel.CityId,
+            ProfileImage = null
+        };
+
+        bool isUserCreated = await _usersRepository.CreateUserAsync(user);
+        if (isUserCreated)
+        {
+            int userId = user.UserId;
+            UsersLoginViewModel login = new()
+            {
+                Email = user.Email,
+                UserId = userId,
+                UserName = user.UserName,
+                HashPassword = user.PasswordHash,
+                RoleId = user.RoleId,
+                Status = (Status)1,
+            };
+
+            await _usersLoginService.CreateUserLoginAsync(login);
+            return true;
+        }
+        return false;
+    }
+
+    #endregion
+
+    #region GetUserById
+
+    public async Task<UpdateUserViewModel?> GetUserByIdAsync(int id)
+    {
+        User? user = await _usersRepository.GetUserByIdAsync(id);
+
+        if (user != null)
+        {
+            UpdateUserViewModel updateUserViewModel = new()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName!,
+                RoleId = user.RoleId,
+                Email = user.Email!,
+                Password = user.PasswordHash!,
+                CountryId = user.CountryId,
+                StateId = user.StateId,
+                CityId = user.CityId,
+                Address = user.Address!,
+                ZipCode = user.ZipCode!,
+                PhoneNumber = user.PhoneNumber,
+                Status = user.Status.HasValue ? (UserStatus)user.Status : UserStatus.Active,
+                ProfileImage = user.ProfileImage!
+            };
+
+            return updateUserViewModel;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    #endregion
 }

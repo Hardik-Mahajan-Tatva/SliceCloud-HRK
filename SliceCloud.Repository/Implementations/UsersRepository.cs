@@ -6,13 +6,15 @@ using SliceCloud.Repository.ViewModels;
 
 namespace SliceCloud.Repository.Implementations;
 
-public class UsersRepository(SliceCloudContext context) : IUsersRepository
+public class UsersRepository(SliceCloudContext sliceCloudContext) : IUsersRepository
 {
-    private readonly SliceCloudContext _context = context;
+    private readonly SliceCloudContext _sliceCloudContext = sliceCloudContext;
+
+    #region GetAllUsers
 
     public async Task<PaginatedList<User>> GetAllUsersAsync(int pageNumber, int pageSize, string query, string sortOrder, string sortColumn, string search)
     {
-        IQueryable<User>? usersQuery = _context.Users
+        IQueryable<User>? usersQuery = _sliceCloudContext.Users
        .AsNoTracking()
        .Where(u => u.IsDeleted == false);
 
@@ -41,4 +43,79 @@ public class UsersRepository(SliceCloudContext context) : IUsersRepository
         return paginatedUsers;
     }
 
+    #endregion
+
+    #region IsEmailExists
+
+    public async Task<bool> IsEmailExistsAsync(string email, int? userId)
+    {
+        if (userId is not null)
+        {
+            return await _sliceCloudContext.Users.AnyAsync(u => u.Email == email && u.UserId != userId);
+        }
+        else
+        {
+            return await _sliceCloudContext.Users.AnyAsync(u => u.Email == email);
+        }
+    }
+
+    #endregion
+
+    #region IsPhoneExists
+
+    public async Task<bool> IsPhoneExistsAsync(string phone, int? userId)
+    {
+        if (userId is not null)
+        {
+            return await _sliceCloudContext.Users.AnyAsync(u => u.PhoneNumber == phone && u.UserId != userId);
+        }
+        else
+        {
+            return await _sliceCloudContext.Users.AnyAsync(u => u.PhoneNumber == phone);
+        }
+    }
+    #endregion
+
+    #region IsUsernameExists
+
+    public async Task<bool> IsUsernameExistsAsync(string username, int? userId)
+    {
+        if (userId is not null)
+        {
+            return await _sliceCloudContext.Users.AnyAsync(u => u.UserName == username && u.UserId != userId);
+        }
+        else
+        {
+            return await _sliceCloudContext.Users.AnyAsync(u => u.UserName == username);
+        }
+    }
+
+    #endregion
+
+    #region CreateUser
+
+    public async Task<bool> CreateUserAsync(User user)
+    {
+        if (user != null)
+        {
+            _sliceCloudContext.Users.Add(user);
+            await _sliceCloudContext.SaveChangesAsync();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    #endregion
+    
+    #region GetUserById
+
+    public async Task<User?> GetUserByIdAsync(int userId)
+    {
+        return await _sliceCloudContext.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+    }
+
+    #endregion
 }
